@@ -64,4 +64,3 @@ r.Winsor3 <- lm(yc~X)
 print(summary(r.Winsor3))
 print(anova(r.Winsor3))
 ydugaW3<-fitted(r.Winsor3)
-y
