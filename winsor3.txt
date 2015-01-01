@@ -1,0 +1,159 @@
+#pd data pertama banget
+input<-read.table("F://data1.csv",sep=",",header=TRUE)
+	h <- lm(Y~X, data=input)
+	y<-input$Y
+	x<-input$X
+	beta<-coef(h)
+	anova<-anova(h)
+	anova
+	summary<-summary(h)
+	summary
+	e<-resid(h) 
+	r<-rstandard(h)
+	yduga<-fitted(h)
+	print(as.matrix(yduga))
+	abse<-as.matrix(abs(e))
+	plot(x,y, col="blue", main="Plot OLS Regression")
+	lines(x, yduga, col="red")
+	w<-rep(0, nrow=nrow(abse))
+	for (i in 1:nrow(abse)) {
+	w[i]<-ifelse(abse[i]<=1.345, 1, 1.345/abse[i])
+	i<- i+1;
+	}
+	hasilH<- lm(y~x, data=input, weights=w)
+	summary(hasilH)
+	anova(hasilH)
+	ydugaH<-fitted(hasilH)
+	windows()
+	plot(x,y, col="blue", main="Plot OLS+Huber Regression")
+	lines(x, yduga, col="red")
+	lines(x, ydugaH, col="green")
+	print(e)
+	a<-quantile(e, 0.05)
+	b<-quantile(e, 0.95)
+	n<-length(y)
+	yb<-rep(0,n)
+	for (i in 1:n){
+	if (e[i]>=a && e[i]<=b){
+		yb[i]<-y[i]}
+		else if(e[i]<a) {
+			yb[i]<-yduga[i]+a}
+		else if(e[i]>b) {
+			yb[i]<-yduga[i]+b}
+		i<-i+1	
+	}
+	print(as.matrix(yb))
+	hasilW <- lm(yb~x)
+	summary(hasilW)
+	anova(hasilW)
+	ydugaW<-fitted(hasilW)
+	windows()
+	plot(x,yb, col="blue", main="Plot Winsor Regression", ylim=c(57, 121))
+	lines(x, ydugaW, col="green")
+
+
+#dengan residual
+input<-read.table("F://eks.csv",sep=",",header=TRUE)
+	h <- lm(y~x5, data=input)
+	y<-input$y
+	x5<-input$x5
+	beta<-coef(h)
+	anova<-anova(h)
+	anova
+	summary<-summary(h)
+	summary
+	e<-resid(h) 
+	r<-rstandard(h)
+	yduga<-fitted(h)
+	abse<-as.matrix(abs(e))
+	plot(x5,y, col="blue", main="Plot OLS Regression")
+	lines(x5, yduga, col="red")
+	w<-rep(0, nrow=nrow(abse))
+	for (i in 1:nrow(abse)) {
+	w[i]<-ifelse(abse[i]<=1.345, 1, 1.345/abse[i])
+	i<- i+1;
+	}
+	hasilH<- lm(y~x5, data=input, weights=w)
+	summary(hasilH)
+	anova(hasilH)
+	ydugaH<-fitted(hasilH)
+	windows()
+	plot(x5,y, col="blue", main="Plot OLS+Huber Regression")
+	lines(x5, yduga, col="red")
+	lines(x5, ydugaH, col="green")
+	a<-quantile(e, 0.05)
+	b<-quantile(e, 0.95)
+	n<-length(y)
+	yb<-rep(0,n)
+	for (i in 1:n){
+	if (e[i]>=a && e[i]<=b){
+		yb[i]<-y[i]}
+		else if(e[i]<a) {
+			yb[i]<-yduga[i]+a}
+		else if(e[i]>b) {
+			yb[i]<-yduga[i]+b}
+		i<-i+1	
+	}
+	yb
+	hasilW <- lm(yb~x5)
+	summary(hasilW)
+	anova(hasilW)
+	ydugaW<-fitted(hasilW)
+	windows()
+	plot(x5,yb, col="blue", main="Plot Winsor Regression", ylim=c(1198.232, 3630.687))
+	lines(x5, ydugaW, col="green")
+
+#dengan standardized residual
+input<-read.table("F://eks.csv",sep=",",header=TRUE)
+	h <- lm(y~x5, data=input)
+	y<-input$y
+	x5<-input$x5
+	beta<-coef(h)
+	anova<-anova(h)
+	anova
+	summary<-summary(h)
+	summary
+	e<-resid(h) 
+	r<-rstandard(h)
+	yduga<-fitted(h)
+	print(as.matrix(yduga))
+	abse<-as.matrix(abs(e))
+	plot(x5,y, col="blue", main="Plot OLS Regression")
+	lines(x5, yduga, col="red")
+	w<-rep(0, nrow=nrow(abse))
+	for (i in 1:nrow(abse)) {
+	w[i]<-ifelse(abse[i]<=1.345, 1, 1.345/abse[i])
+	i<- i+1;
+	}
+	hasilH<- lm(y~x5, data=input, weights=w)
+	summary(hasilH)
+	anova(hasilH)
+	ydugaH<-fitted(hasilH)
+	windows()
+	plot(x5,y, col="blue", main="Plot OLS+Huber Regression")
+	lines(x5, yduga, col="red")
+	lines(x5, ydugaH, col="green")
+	print(as.matrix(e))
+	a1<-quantile(r, 0.05)
+	b1<-quantile(r, 0.95)
+	n<-length(y)
+	yb<-rep(0,n)
+	for (i in 1:n){
+	if (r[i]>=a1 && r[i]<=b1){
+		yb[i]<-y[i]}
+		else if(r[i]<a1) {
+			yb[i]<-yduga[i]+a1}
+		else if(r[i]>b1) {
+			yb[i]<-yduga[i]+b1}
+		i<-i+1	
+	}
+	print(as.matrix(yb))
+	hasilW <- lm(yb~x5)
+	summary(hasilW)
+	anova(hasilW)
+	ydugaW<-fitted(hasilW)
+	windows()
+	plot(x5,yb, col="blue", main="Plot Winsor Regression | r", ylim=c(1198.232, 3630.687))
+	lines(x5, ydugaW, col="green")
+
+

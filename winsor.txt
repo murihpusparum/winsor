@@ -1,0 +1,37 @@
+		MSE	R-sq	
+OLS		121.5	41%
+WLS Huber	11.42	71.04%
+OLS Winsor	79.7	44.06%
+WLS Winsor	10.4	64.97%
+
+bebas<-c(15,26,10,9,15,20,18,11,8,20,7,9,10,11,11,10,12,42,17,11,10)
+respon<-c(95,71,83,91,102,87,93,100,104,94,113,96,83,84,102,100,105,57,121,86,100)
+hasil <- lm(respon~bebas)
+beta<-coef(hasil)
+anova<-anova(hasil)
+summary<-summary(hasil)
+e<-resid(hasil) 
+yduga<-fitted(hasil)
+abse<-as.matrix(abs(e))
+w<-matrix(0, nrow=nrow(abse), ncol=nrow(abse))
+for (i in 1:nrow(abse)) {
+	w[i,i]<-ifelse(abse[i,1]<=1.345, 1, 1.345/abse[i,1])
+	i<- i+1;
+}
+bobot<-rep(0, nrow(abse))
+for (i in 1:nrow(abse)) {
+	bobot[i]<-ifelse(abse[i,1]<=1.345, 1, 1.345/abse[i,1])
+	i<- i+1;
+}
+hasilWLS <- lm(respon~bebas, weights=bobot)
+anovaW<-anova(hasilWLS)
+summaryW<-summary(hasilWLS)
+yduga1<-fitted(hasilWLS)
+windows()
+plot(bebas,respon, col="blue", main="Plot Data")
+lines(bebas, yduga, col="red")
+lines(bebas, yduga1, col="green")
+
+
+plot(bebas, respon, col="blue", main="plot Regresi OLS (Winsor)", xlim=c(7,42), ylim=c(57,121))
+

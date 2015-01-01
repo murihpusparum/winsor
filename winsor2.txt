@@ -1,0 +1,40 @@
+bebas<-c(15,26,10,9,15,20,18,11,8,20,7,9,10,11,11,10,12,42,17,11,10)
+respon<-c(95,71,83,91,102,87,93,100,104,94,113,96,83,84,102,100,105,57,121,86,100)
+regresi<-function(bebas,respon,alpha1,alpha2){
+	hasil <- lm(respon~bebas)
+	beta<-coef(hasil)
+	anova<-anova(hasil)
+	print(anova)
+	summary<-summary(hasil)
+	print(summary)
+	e<-resid(hasil) 
+	r<-rstandard(hasil)
+	yduga<-fitted(hasil)
+	abse<-as.matrix(abs(e))
+	plot(bebas,respon, col="blue", main="Plot OLS Regression")
+	lines(bebas, yduga, col="red")
+	a<-quantile(e, alpha1)
+	b<-quantile(e, alpha2)
+	n<-length(respon)
+	for (i in 1:n){
+	if (e[i]>=a && e[i]<=b){
+		y[i]<-respon[i]}
+		else if(e[i]<a) {
+			y[i]<-respon[i]+(a*(0-alpha1))}
+			else {y[i]<-respon[i]+(b*(0-alpha1))}
+	print(y[i])
+	i<-i+1
+	}
+	hasilW <- lm(y~bebas)
+	anovaW<-anova(hasilW)
+	print(anovaW)
+	summaryW<-summary(hasilW)
+	print(summaryW)
+	ydugaW<-fitted(hasilW)
+	windows()
+	plot(bebas,y, col="green", main="Plot Winsor Regression")
+	lines(bebas, ydugaW, col="black")
+}
+regresi(bebas,respon,0.1,0.9)
+regresi(bebas,respon,0.25,0.75)
+regresi(bebas,respon,0.3,0.7)

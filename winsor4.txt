@@ -1,0 +1,128 @@
+X<-c(4,14,11,14,10,3,9,7,4,11,12)
+Y<-c(10,30,82,28,25,8,19,14,9,26,28)
+plot(X,Y, col="blue", main="Plot X vs Y")
+input<-read.table("F://eks.csv",sep=",",header=TRUE)
+Y<-input$y
+X<-input$x5
+n<-length(e)
+
+winsor4<-function(X,Y){
+reg<-lm(Y~X)
+print(summary(reg))
+print(anova(reg))
+yduga<-fitted(reg)
+windows()
+plot(X, Y, col="blue", main="Plot OLS Regression", ylim=c(8,82))
+lines(X, yduga, col="red")
+
+
+e<-resid(reg) 
+n<-length(e)
+abse<-as.matrix(abs(e))
+w<-rep(0, nrow=nrow(abse))
+for (i in 1:nrow(abse)) {
+w[i]<-ifelse(abse[i]<=1.345, 1, 1.345/abse[i])
+i<- i+1
+}
+r.Huber<- lm(Y~X, weights=w)
+print(summary(r.Huber))
+print(anova(r.Huber))
+ydugaH<-fitted(r.Huber)
+windows()
+plot(X, Y, col="blue", main="Plot Huber Regression", ylim=c(8,82))
+lines(X, ydugaH, col="green")
+
+
+r<-rstandard(reg)
+a<-quantile(e, 0.05)
+b<-quantile(e, 0.95)
+n<-length(Y)
+ya<-rep(0,n)
+for (i in 1:n){
+if (e[i]>=a && e[i]<=b){
+	ya[i]<-Y[i]}
+	else if(e[i]<a) {
+		ya[i]<-yduga[i]+a}
+	else if(e[i]>b) {
+		ya[i]<-yduga[i]+b}
+	i<-i+1	
+}
+ya
+r.Winsor1 <- lm(ya~X)
+print(summary(r.Winsor1))
+print(anova(r.Winsor1))
+ydugaW1<-fitted(r.Winsor1)
+windows()
+plot(X, ya, col="blue", main="Plot Winsor1 Regression", ylim=c(8,82))
+lines(X, ydugaW1, col="purple")
+
+yb<-rep(0,n)
+for (i in 1:n){
+if (r[i]>=(-2) && r[i]<=2){
+	yb[i]<-Y[i]}
+	else if(r[i]<(-2)) {
+		yb[i]<-yduga[i]+a}
+	else if(r[i]>2) {
+		yb[i]<-yduga[i]+b}
+	i<-i+1	
+}
+yb
+r.Winsor2 <- lm(yb~X)
+print(summary(r.Winsor2))
+print(anova(r.Winsor2))
+ydugaW2<-fitted(r.Winsor2)
+windows()
+plot(X,yb, col="blue", main="Plot Winsor2 Regression", ylim=c(8,82))
+lines(X, ydugaW2, col="pink")
+
+s2<-(1/(n-2))*sum(e^2)
+si<-sqrt(s2)*sqrt(1-hat(X))
+ri<-e/si
+c<-1.345
+yc<-rep(0,n)
+for (i in 1:n){
+if (abs(e[i])<=c*si[i]){
+	yc[i]<-Y[i]}
+	else if(e[i]<(-c*si[i])) {
+		yc[i]<-yduga[i]-(c*si[i])}
+	else if(e[i]>(c*si[i])) {
+		yc[i]<-yduga[i]+(c*si[i])}
+	i<-i+1	
+}
+yc
+Y
+r.Winsor3 <- lm(yc~X)
+print(summary(r.Winsor3))
+print(anova(r.Winsor3))
+ydugaW3<-fitted(r.Winsor3)
+windows()
+plot(X,yc, col="blue", main="Plot Winsor3 Regression", ylim=c(8,82))
+lines(X, ydugaW3, col="dark blue")
+
+e2<-resid(r.Winsor3)
+
+s2a<-(1/(n-2))*sum(e2^2)
+sia<-sqrt(s2a)*sqrt(1-hat(X))
+ria<-e2/sia
+c<-1.345
+yd<-rep(0,n)
+for (i in 1:n){
+if (abs(e2[i])<=c*sia[i]){
+	yd[i]<-yc[i]}
+	else if(e2[i]<(-c*sia[i])) {
+		yd[i]<-ydugaW3[i]-(c*sia[i])}
+	else if(e2[i]>(c*sia[i])) {
+		yd[i]<-ydugaW3[i]+(c*sia[i])}
+	i<-i+1	
+}
+yd
+r.Winsor3a <- lm(yd~X)
+print(summary(r.Winsor3a))
+print(anova(r.Winsor3a))
+ydugaW3a<-fitted(r.Winsor3a)
+windows()
+plot(X,yd, col="blue", main="Plot Winsor3a Regression", ylim=c(8,82))
+lines(X, ydugaW3, col="yellow")
+}
+
+winsor4(X,Y)
